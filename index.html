@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Saitrades | Prop Firm Elite Trading Platform</title>
+  <!-- Google Fonts + Chart.js + Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0c12;
+      color: #eef2ff;
+      transition: background 0.2s, color 0.2s;
+      overflow-x: hidden;
+    }
+
+    /* Light mode styles */
+    body.light-mode {
+      background: #f4f7fc;
+      color: #111827;
+    }
+
+    body.light-mode .glass-card, 
+    body.light-mode .dashboard-card,
+    body.light-mode .challenge-card,
+    body.light-mode .admin-card,
+    body.light-mode .pricing-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(0px);
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+
+    body.light-mode .navbar {
+      background: rgba(255,255,255,0.85);
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    body.light-mode .footer {
+      background: #eef2ff;
+      border-top: 1px solid #cbd5e1;
+    }
+
+    /* Global classes */
+    .glass-card {
+      background: rgba(18, 22, 35, 0.75);
+      backdrop-filter: blur(12px);
+      border-radius: 28px;
+      border: 1px solid rgba(72, 187, 120, 0.2);
+      transition: all 0.25s ease;
+    }
+
+    .dashboard-card, .challenge-card, .admin-card, .pricing-card {
+      background: #11141f;
+      border-radius: 28px;
+      padding: 1.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid #2a2f3f;
+    }
+
+    .dashboard-card:hover, .pricing-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5);
+      border-color: #2dd4bf30;
+    }
+
+    .accent-gold {
+      color: #f5b042;
+    }
+    .accent-green {
+      color: #2dd4bf;
+    }
+    .profit-positive {
+      color: #2dd4bf;
+    }
+    .profit-negative {
+      color: #f97373;
+    }
+    button {
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: linear-gradient(105deg, #2dd4bf 0%, #0f766e 100%);
+      border: none;
+      padding: 12px 28px;
+      border-radius: 40px;
+      font-weight: 600;
+      color: white;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(45,212,191,0.3);
+    }
+    .btn-primary:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 20px rgba(45,212,191,0.5);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #2dd4bf;
+      padding: 10px 24px;
+      border-radius: 40px;
+      color: #2dd4bf;
+      font-weight: 500;
+    }
+    .btn-outline:hover {
+      background: #2dd4bf20;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 3rem;
+      background: rgba(10,12,18,0.85);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff, #2dd4bf);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2rem 2rem;
+    }
+    .hero {
+      min-height: 85vh;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .footer {
+      background: #0c0f17;
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.8rem;
+      border-top: 1px solid #1f2937;
+    }
+    .chart-bg {
+      max-width: 500px;
+      width: 100%;
+    }
+    .flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .progress-bar {
+      background: #2d3748;
+      border-radius: 20px;
+      height: 10px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      background: linear-gradient(90deg, #2dd4bf, #f5b042);
+      width: 0%;
+      height: 100%;
+      border-radius: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 8px;
+      border-bottom: 1px solid #2a2f3f;
+    }
+    body.light-mode th, body.light-mode td {
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .badge {
+      background: #2dd4bf20;
+      border-radius: 40px;
+      padding: 4px 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .toast-notify {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #111;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 60px;
+      z-index: 2000;
+      font-weight: 500;
+      box-shadow: 0 8px 20px black;
+      border-left: 5px solid #2dd4bf;
+    }
+    @media (max-width: 768px) {
+      .navbar { padding: 1rem; flex-wrap: wrap; gap: 10px; }
+      .container { padding: 1rem; }
+      .hero { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div id="toastRoot"></div>
+  <div class="navbar">
+    <div class="logo">⚡ SAITRADES</div>
+    <div style="display: flex; gap: 12px;">
+      <button id="themeToggle" class="btn-outline" style="background:transparent;"><i class="fas fa-moon"></i> Light</button>
+      <button id="navLoginBtn" class="btn-outline">Login</button>
+      <button id="navSignupBtn" class="btn-primary">Start Challenge</button>
+    </div>
+  </div>
+
+  <!-- MAIN APP: routing with simple page switches -->
+  <div id="appRoot"></div>
+
+  <script>
+    // ---------- MOCK DATA & STATE ----------
+    let currentPage = "landing";
+    let currentUser = null; // if logged in
+    const mockUsers = [{ email: "trader@demo.com", password: "pass", name: "Alex Mercer" }];
+    
+    // Dashboard dynamic stats (simulate live counters)
+    let dashboardStats = {
+      equityCurve: [10000, 10200, 10150, 10400, 10800, 11200, 11500, 11800, 12100, 12500, 12800, 13200],
+      dailyPL: 342.50,
+      winRate: 68,
+      tradesTaken: 124,
+      riskUsage: 42,
+      profitTarget: 85, // percentage of target achieved (10% target)
+      maxDrawdown: 3.2,
+      dailyLossUsed: 2.1,
+      openPositions: [
+        { pair: "EUR/USD", type: "Long", lots: 1.2, entry: 1.0852, current: 1.0875, pnl: "+276 USD" },
+        { pair: "BTC/USD", type: "Short", lots: 0.5, entry: 43200, current: 42800, pnl: "+200 USD" },
+        { pair: "GBP/JPY", type: "Long", lots: 0.8, entry: 186.4, current: 185.9, pnl: "-48 USD" }
+      ],
+      tradeHistory: [
+        { date: "2025-03-25", pair: "EUR/USD", side: "Buy", qty: 1.0, price: 1.0820, pnl: "+124.5" },
+        { date: "2025-03-24", pair: "BTC/USD", side: "Sell", qty: 0.3, price: 43500, pnl: "+510" },
+        { date: "2025-03-24", pair: "NASDAQ", side: "Buy", qty: 5, price: 18200, pnl: "-230" },
+        { date: "2025-03-23", pair: "EUR/USD", side: "Sell", qty: 0.5, price: 1.0790, pnl: "+89" }
+      ]
+    };
+
+    function showToast(message, type = "info") {
+      const root = document.getElementById("toastRoot");
+      const toast = document.createElement("div");
+      toast.className = "toast-notify";
+      toast.innerHTML = `<i class="fas ${type === 'alert' ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${message}`;
+      toast.style.background = type === "alert" ? "#aa2e2e" : "#0f172a";
+      root.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Helper to update number counters (animated)
+    function animateNumber(element, start, end, suffix = "") {
+      let current = start;
+      const step = (end - start) / 30;
+      const interval = setInterval(() => {
+        current += step;
+        if ((step > 0 && current >= end) || (step < 0 && current <= end)) {
+          current = end;
+          clearInterval(interval);
+        }
+        element.innerText = (Math.floor(current * 10) / 10) + suffix;
+      }, 20);
+    }
+
+    // render function
+    function render() {
+      const app = document.getElementById("appRoot");
+      if (currentPage === "landing") app.innerHTML = renderLanding();
+      else if (currentPage === "login") app.innerHTML = renderAuth("login");
+      else if (currentPage === "signup") app.innerHTML = renderAuth("signup");
+      else if (currentPage === "dashboard") app.innerHTML = renderDashboard();
+      else if (currentPage === "challenge") app.innerHTML = renderChallenge();
+      else if (currentPage === "admin") app.innerHTML = renderAdmin();
+      attachPageEvents();
+    }
+
+    // LANDING PAGE
+    function renderLanding() {
+      return `
+        <div class="container">
+          <div class="hero">
+            <div>
+              <h1 style="font-size: 3.5rem; font-weight:800;">Trade Smart.<br>Get Funded.<span class="accent-green"> Scale Without Risk.</span></h1>
+              <p style="margin: 1rem 0 2rem; opacity:0.8;">Join the elite prop firm — up to 90% profit split, instant payouts.</p>
+              <div><button id="landingCta" class="btn-primary" style="margin-right: 1rem;">Start Challenge</button><button id="landingLogin" class="btn-outline">Login</button></div>
+            </div>
+            <div class="chart-bg"><canvas id="heroChart" width="400" height="200" style="background:transparent"></canvas></div>
+          </div>
+          <div style="margin: 4rem 0;"><h2 class="accent-green">How Saitrades Works</h2><div class="flex-between" style="gap:2rem; flex-wrap:wrap; margin-top:2rem;"><div class="dashboard-card" style="flex:1;"><i class="fas fa-chart-line fa-2x accent-green"></i><h3>Step 1: Take Challenge</h3><p>Pass evaluation with realistic targets.</p></div><div class="dashboard-card" style="flex:1;"><i class="fas fa-wallet fa-2x accent-gold"></i><h3>Step 2: Get Funded</h3><p>Receive up to $200,000 capital.</p></div><div class="dashboard-card" style="flex:1;"><i class="fas fa-hand-holding-usd fa-2x accent-green"></i><h3>Step 3: Scale & Payout</h3><p>Keep up to 90% of profits.</p></div></div></div>
+          <div style="margin:4rem 0;"><h2>Challenge Plans</h2><div class="flex-between" style="gap:1.5rem; flex-wrap:wrap;"><div class="pricing-card" style="flex:1;"><h3>$5k Account</h3><p class="accent-gold" style="font-size:2rem;">$49</p><p>Profit Target 8% | Max Loss 5%</p><button class="btn-primary" style="margin-top:1rem;">Select</button></div><div class="pricing-card" style="flex:1;"><h3>$25k Account</h3><p class="accent-gold" style="font-size:2rem;">$199</p><p>Profit Target 8% | Max Loss 5%</p><button class="btn-primary">Select</button></div><div class="pricing-card" style="flex:1;"><h3>$100k Account</h3><p class="accent-gold" style="font-size:2rem;">$499</p><p>Profit Target 8% | Max Loss 5%</p><button class="btn-primary">Select</button></div></div></div>
+          <div class="dashboard-card"><h3>⭐ Testimonials</h3><p>"Saitrades gave me the capital to scale — best prop firm!" - Sarah J.</p><p>"Smooth payouts, transparent rules." - Mark T.</p></div>
+          <div class="footer" style="margin-top:3rem;">© 2025 Saitrades — Trusted by 5000+ traders globally</div>
+        </div>
+      `;
+    }
+
+    function renderAuth(type) {
+      return `
+        <div class="container" style="max-width:500px; margin: 4rem auto;">
+          <div class="dashboard-card" style="padding:2rem;">
+            <h2>${type === "login" ? "Welcome Back" : "Create Account"}</h2>
+            <input id="authEmail" type="email" placeholder="Email" class="glass-card" style="width:100%; padding:12px; margin:1rem 0; background:#1e1f2c; border:none; border-radius:20px; color:white;" />
+            <input id="authPass" type="password" placeholder="Password" class="glass-card" style="width:100%; padding:12px; margin-bottom:1rem; background:#1e1f2c; border:none; border-radius:20px;" />
+            <div id="passStrength" style="font-size:0.7rem;"></div>
+            <button id="authSubmitBtn" class="btn-primary" style="width:100%;">${type === "login" ? "Login" : "Sign Up"}</button>
+            <p style="margin-top:1rem; text-align:center;">🔒 KYC ready | AES-256 encrypted</p>
+            <button id="switchAuth" style="background:none; border:none; color:#2dd4bf; margin-top:1rem;">${type === "login" ? "No account? Sign up" : "Already have an account? Login"}</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDashboard() {
+      const stats = dashboardStats;
+      const profitTargetPercent = stats.profitTarget;
+      const ddPercent = stats.maxDrawdown;
+      const dailyLossPercent = stats.dailyLossUsed;
+      return `
+        <div class="container">
+          <div class="flex-between"><h2>Dashboard <span style="font-size:1rem;">👋 ${currentUser?.name || "Trader"}</span></h2><button id="switchLightModeBtn" class="btn-outline"><i class="fas fa-palette"></i> Light/Dark</button></div>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); gap:1.5rem; margin:2rem 0;">
+            <div class="dashboard-card"><h3>Equity Curve</h3><canvas id="equityChartCanvas" height="150"></canvas></div>
+            <div class="dashboard-card"><h3>Daily P&L</h3><div id="dailyPLValue" class="accent-green" style="font-size:2rem;">+${stats.dailyPL}</div><div>Win Rate: ${stats.winRate}%</div><div>Trades: ${stats.tradesTaken}</div><div>Risk Usage: ${stats.riskUsage}%</div></div>
+            <div class="dashboard-card"><h3>Challenge Progress</h3><div>Profit Target: ${profitTargetPercent}% <div class="progress-bar mt-1"><div class="progress-fill" style="width:${profitTargetPercent}%"></div></div></div><div>Max Drawdown: ${ddPercent}% / 5%<div class="progress-bar mt-1"><div class="progress-fill" style="width:${(ddPercent/5)*100}%; background:#f5b042;"></div></div></div><div>Daily Loss: ${dailyLossPercent}% / 3%<div class="progress-bar mt-1"><div class="progress-fill" style="width:${(dailyLossPercent/3)*100}%"></div></div></div></div>
+          </div>
+          <div class="dashboard-card"><h3>Open Positions</h3><table><thead><tr><th>Pair</th><th>Type</th><th>Lots</th><th>Entry</th><th>Current</th><th>P&L</th></tr></thead><tbody id="openPositionsBody"></tbody></table></div>
+          <div class="dashboard-card"><h3>Trade History <i class="fas fa-sort"></i></h3><table><thead><tr><th>Date</th><th>Pair</th><th>Side</th><th>Qty</th><th>P&L</th></tr></thead><tbody id="tradeHistoryBody"></tbody></table></div>
+          <div class="flex-between"><button id="quickWithdraw" class="btn-primary">Request Withdrawal</button><button id="supportBtn" class="btn-outline">Support</button></div>
+        </div>
+      `;
+    }
+
+    function renderChallenge() {
+      return `
+        <div class="container">
+          <div class="dashboard-card"><h2>📜 Challenge Rules (100k Challenge)</h2><div class="flex-between"><span>Max Loss: 5%</span><span>Profit Target: 10%</span><span>Time Limit: 30 days</span></div><div id="countdownTimer" class="accent-gold" style="font-size:1.5rem;">29d 12h 34m</div><div class="progress-bar mt-2"><div id="challengeProfitFill" class="progress-fill" style="width:68%"></div></div><p>Profit: 6.8% / 10%</p></div>
+          <div class="dashboard-card"><h3>Simulated Trade Panel</h3><div><input id="mockPair" placeholder="EUR/USD" class="glass-card" style="padding:8px;"><input id="mockLots" placeholder="Lots" class="glass-card"><button id="mockBuyBtn" class="btn-primary">BUY</button><button id="mockSellBtn" class="btn-outline">SELL</button></div><div id="tradeLogList" style="margin-top:1rem; max-height:200px; overflow-y:auto;"></div><button id="breachAlertBtn" class="btn-outline" style="margin-top:1rem;">Simulate Rule Breach</button></div>
+        </div>
+      `;
+    }
+
+    function renderAdmin() {
+      return `
+        <div class="container">
+          <h2>Admin Console</h2>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1rem;"><div class="admin-card">Total Users: 1,234</div><div class="admin-card">Funded Accounts: 567</div><div class="admin-card">Revenue (MTD): $128,400</div><div class="admin-card">Risk Breaches: 3</div></div>
+          <div class="dashboard-card"><h3>User List & Approval</h3><table><thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>Alex M</td><td>alex@demo.com</td><td><span class="badge">Active</span></td><td><button class="btn-primary" style="padding:4px 12px;">Approve</button></td></tr><tr><td>Jane D</td><td>jane@trader.io</td><td><span class="badge">Pending</span></td><td><button class="btn-primary">Approve</button></td></tr></tbody></table></div>
+          <div class="admin-card"><i class="fas fa-bell"></i> Risk Alerts: Trader "John" breached max daily loss</div>
+        </div>
+      `;
+    }
+
+    function attachPageEvents() {
+      if (currentPage === "landing") {
+        document.getElementById("landingCta")?.addEventListener("click", ()=> { currentPage="signup"; render(); });
+        document.getElementById("landingLogin")?.addEventListener("click", ()=> { currentPage="login"; render(); });
+        const heroCanvas = document.getElementById("heroChart");
+        if(heroCanvas) new Chart(heroCanvas, { type: 'line', data: { labels: Array.from({length:20},(_,i)=>i), datasets: [{ data: [120,135,128,145,160,155,170,188,200,195,210,225], borderColor: '#2dd4bf', tension:0.3, fill:false }] }, options:{ responsive:true, plugins:{ legend:{display:false} } } });
+      }
+      if (currentPage === "login" || currentPage === "signup") {
+        document.getElementById("authSubmitBtn")?.addEventListener("click", (e) => {
+          const email = document.getElementById("authEmail")?.value;
+          const pass = document.getElementById("authPass")?.value;
+          if(currentPage === "login" && email === "trader@demo.com" && pass === "pass") {
+            currentUser = { email, name: "Alex Mercer" };
+            currentPage = "dashboard";
+            showToast("Login successful, welcome to Saitrades!");
+            render();
+          } else if(currentPage === "signup") { currentUser = { email, name: email.split('@')[0] }; currentPage = "dashboard"; showToast("Account created! Get funded."); render();}
+          else showToast("Invalid credentials (use trader@demo.com / pass)", "alert");
+        });
+        document.getElementById("switchAuth")?.addEventListener("click", ()=> { currentPage = currentPage === "login" ? "signup" : "login"; render(); });
+        const passInput = document.getElementById("authPass");
+        if(passInput) passInput.addEventListener("input", (e)=> { const strength = e.target.value.length > 5 ? "Strong password" : "Weak"; document.getElementById("passStrength").innerText = strength; });
+      }
+      if(currentPage === "dashboard") {
+        const ctx = document.getElementById("equityChartCanvas")?.getContext('2d');
+        if(ctx) new Chart(ctx, { type: 'line', data: { labels: Array.from({length: dashboardStats.equityCurve.length}, (_,i)=>i), datasets: [{ data: dashboardStats.equityCurve, borderColor: '#2dd4bf', fill: false, tension:0.3 }] }, options: { responsive:true, plugins:{ legend:{display:false} } } });
+        const openTbody = document.getElementById("openPositionsBody");
+        if(openTbody) openTbody.innerHTML = dashboardStats.openPositions.map(p => `<tr><td>${p.pair}</td><td>${p.type}</td><td>${p.lots}</td><td>${p.entry}</td><td>${p.current}</td><td class="${p.pnl.includes('+')?'profit-positive':'profit-negative'}">${p.pnl}</td></tr>`).join('');
+        const historyBody = document.getElementById("tradeHistoryBody");
+        if(historyBody) historyBody.innerHTML = dashboardStats.tradeHistory.map(t => `<tr><td>${t.date}</td><td>${t.pair}</td><td>${t.side}</td><td>${t.qty}</td><td class="${t.pnl.includes('+')?'profit-positive':'profit-negative'}">$${t.pnl}</td></tr>`).join('');
+        document.getElementById("quickWithdraw")?.addEventListener("click", ()=> showToast("Withdrawal requested (simulated)."));
+        document.getElementById("supportBtn")?.addEventListener("click", ()=> showToast("Support chat: 24/7 live agent (mock)"));
+      }
+      if(currentPage === "challenge") {
+        let countdownSec = 30*86400 - 20000;
+        const timerEl = document.getElementById("countdownTimer");
+        const interval = setInterval(()=>{ if(currentPage !== "challenge") clearInterval(interval); else { countdownSec--; if(countdownSec>0) { const days = Math.floor(countdownSec/86400); const hrs = Math.floor((countdownSec%86400)/3600); timerEl.innerText = `${days}d ${hrs}h`; }}}, 1000);
+        const tradeLogDiv = document.getElementById("tradeLogList");
+        function addLog(msg){ if(tradeLogDiv) tradeLogDiv.innerHTML += `<div>${new Date().toLocaleTimeString()} - ${msg}</div>`; tradeLogDiv.scrollTop = tradeLogDiv.scrollHeight; }
+        document.getElementById("mockBuyBtn")?.addEventListener("click", ()=> addLog("BUY 1.2 lots EUR/USD @ 1.0890 - P&L simulation +$42"));
+        document.getElementById("mockSellBtn")?.addEventListener("click", ()=> addLog("SELL 0.5 lots BTC/USD @ 42800 - P&L simulation +$190"));
+        document.getElementById("breachAlertBtn")?.addEventListener("click", ()=> { showToast("⚠️ RULE BREACH: Max daily loss exceeded (simulated)", "alert"); addLog("🚨 ALERT: Max loss rule breached - challenge may be void!"); });
+      }
+      if(currentPage === "admin") {
+        // attach fake approval alerts
+        document.querySelectorAll(".admin-card button").forEach(btn => btn.addEventListener("click", ()=> showToast("User approved (mock)")));
+      }
+      document.getElementById("themeToggle")?.addEventListener("click", ()=> { document.body.classList.toggle("light-mode"); });
+      document.getElementById("switchLightModeBtn")?.addEventListener("click", ()=> { document.body.classList.toggle("light-mode"); });
+      document.getElementById("navLoginBtn")?.addEventListener("click", ()=> { currentPage = "login"; render(); });
+      document.getElementById("navSignupBtn")?.addEventListener("click", ()=> { currentPage = "signup"; render(); });
+    }
+
+    // initial render
+    render();
+    // Micro live counters for dashboard later
+    setInterval(()=> {
+      if(currentPage === "dashboard" && document.getElementById("dailyPLValue")) {
+        const newPL = (Math.random() * 200 - 50).toFixed(2);
+        const plElem = document.getElementById("dailyPLValue");
+        if(plElem) plElem.innerHTML = `${newPL >=0 ? '+' : ''}${newPL}`;
+      }
+    }, 7000);
+  </script>
+</body>
+</html>
